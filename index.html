@@ -446,51 +446,38 @@
     btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> AI Berpikir..."; 
     btn.disabled = true;
 
-    // Susun instruksi laporan
-    const promptInstruksi = `Anda adalah PPL Pertanian Profesional. Tugas Anda: Menyusun laporan bulanan formal standar Kementerian Pertanian. Buat laporan dalam format JSON. 
-    Data: ${JSON.stringify(sel)}. Lokasi: BPP ${document.getElementById('in_bpp').value}.
-    Aturan Penulisan:
-1. Bahasa: Gunakan Bahasa Indonesia formal, teknis, dan objektif.
-2. 'kp' (Kata Pengantar):
-- Wajib terdiri dari 3 paragraf TERPISAH (dipisahkan dengan newline \n\n).
-- Paragraf 1 (Pembuka):
-  Berisi rasa syukur kepada Tuhan Yang Maha Esa, serta penjelasan umum tentang pentingnya laporan kinerja penyuluh pertanian dalam mendukung program Kementerian Pertanian.
-- Paragraf 2 (Isi):
-  Menjelaskan secara ringkas kegiatan yang dilaksanakan berdasarkan data, mencakup pendampingan, capaian, serta peran penyuluh dalam meningkatkan produktivitas dan kesejahteraan petani.
-- Paragraf 3 (Penutup):
-  Berisi harapan, evaluasi umum, serta ucapan terima kasih kepada pihak terkait (petani, pemerintah, dll).
-- Gunakan bahasa formal, panjang, dan naratif (bukan poin-poin).
-- Hindari kalimat terlalu singkat.
-- Gunakan variasi kalimat agar terlihat profesional seperti laporan resmi pemerintah.
-3. 'latar', 'tugas', 'tujuan': Harus mencerminkan kondisi pertanian wilayah setempat dan tupoksi Penyuluh Pertanian sesuai PERMENPAN (perencanaan, pelaksanaan, evaluasi, dan pengembangan metode penyuluhan).
-4. 'items': Iterasi seluruh data. 'rincian' maksimal 1 kalimat efektif. Jika 'user_kendala' kosong/null, buat kendala teknis lapangan yang relevan secara logis. 'tindak' harus berupa solusi profesional dengan maksimal 2 kalimat efektif.
-5. 'kesimp' (Kesimpulan):
-- Wajib terdiri dari 2 paragraf TERPISAH.
-- Gunakan bahasa Indonesia formal, baku, dan naratif seperti laporan resmi pemerintah.
-
-Struktur isi:
-- Paragraf 1 (Pencapaian):
-  Menjelaskan secara umum capaian kinerja penyuluh berdasarkan kegiatan yang telah dilaksanakan, termasuk kontribusi terhadap peningkatan produksi, pendampingan petani, dan dukungan terhadap program Kementerian Pertanian.
-
-- Paragraf 2 (Evaluasi Kendala):
-  Menguraikan kendala yang dihadapi di lapangan (teknis, cuaca, sarana prasarana, partisipasi petani, dll) serta dampaknya terhadap pelaksanaan kegiatan, strategi ke depan, serta harapan terhadap dukungan pemerintah,
-
-    Format JSON harus: {"kp":"", "latar":"", "tugas":"", "tujuan":"", "kesimp":"", "items":[{"no":1, "rincian":"", "kendala":"", "tindak":""}]}. 
-    Berikan hanya JSON murni tanpa kata-kata lain.`;
+    const promptInstruksi = `Anda adalah PPL Pertanian Profesional di BPP ${document.getElementById('in_bpp').value}. 
+    Buat laporan kinerja bulanan formal dalam format JSON murni.
+    Data Kegiatan: ${JSON.stringify(sel)}.
+    
+    STRUKTUR JSON WAJIB:
+    {
+      "kp": "Isi 3 paragraf naratif (pisahkan dengan \\n\\n)",
+      "latar": "Latar belakang tugas penyuluh",
+      "tugas": "Tupoksi penyuluh sesuai PERMENPAN",
+      "tujuan": "Tujuan pelaporan",
+      "kesimp": "Isi 2 paragraf naratif (capaian & evaluasi)",
+      "items": [
+        {"no": 1, "rincian": "Hasil ringkas", "kendala": "Kendala teknis", "tindak": "Solusi"}
+      ]
+    }
+    
+    HANYA BERIKAN JSON MURNI TANPA MARKDOWN DAN TANPA TEKS LAIN.`;
 
     try {
-        // Menggunakan URLSearchParams agar terbaca oleh e.parameter di GAS
-        // Atau tetap JSON tapi GAS harus diubah. Kita pakai cara paling kompatibel:
-        const response = await fetch(scriptURL + "?prompt=" + encodeURIComponent(promptInstruksi), {
-            method: "POST"
+        // Gunakan POST dengan body JSON untuk keamanan data yang panjang
+        const response = await fetch(scriptURL, {
+            method: "POST",
+            body: JSON.stringify({ prompt: promptInstruksi })
         });
 
         const rawData = await response.json();
         
-        // Google Gemini mengirim data di dalam candidates[0].content.parts[0].text
-        // Kita perlu memparsing teks tersebut menjadi JSON object
-        const aiText = rawData.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
-        const obj = JSON.parse(aiText);
+        // Membersihkan karakter aneh dan Markdown backticks
+        let cleanText = rawData.candidates[0].content.parts[0].text;
+        cleanText = cleanText.replace(/```json/g, "").replace(/```/g, "").trim();
+        
+        const obj = JSON.parse(cleanText);
 
         // Update ke Tampilan
         document.getElementById('out_kp').innerHTML = obj.kp.replace(/\n/g, '<br>');
@@ -503,7 +490,8 @@ Struktur isi:
             const rCell = document.getElementById(`r_${item.no}`);
             const orig = sel.find(s => s.no == item.no);
             if(rCell) {
-                rCell.innerHTML = `<div><b>${item.rincian}</b></div>${orig.link ? `<div class="text-[7pt] text-blue-600 mt-1">Eviden: ${orig.link}</div>` : ""}`;
+                const rincianTeks = item.rincian || (orig.detail ? orig.detail : "Terlaksana");
+                rCell.innerHTML = `<div><b>${rincianTeks}</b></div>${orig.link ? `<div class="text-[7pt] text-blue-600 mt-1">Eviden: ${orig.link}</div>` : ""}`;
                 document.getElementById(`k_${item.no}`).innerText = orig.user_kendala || item.kendala;
                 document.getElementById(`t_${item.no}`).innerText = item.tindak;
             }
@@ -513,8 +501,8 @@ Struktur isi:
         alert("✅ Laporan Berhasil Dibuat!");
 
     } catch (e) { 
-        console.error(e);
-        alert("Kesalahan: " + e.message); 
+        console.error("Detail Error:", e);
+        alert("Gagal memproses AI. Pastikan Google Apps Script Anda sudah di-deploy sebagai 'Web App' dengan akses 'Anyone'."); 
     } finally { 
         btn.innerHTML = "🚀 GENERATE AI (GEMINI)"; 
         btn.disabled = false; 
