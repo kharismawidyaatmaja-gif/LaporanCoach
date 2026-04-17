@@ -118,7 +118,7 @@
             <p><b>Generating</b> Form lap. SKP Bulanan dari <b>Mamank.</b> Follow TikTok saya: <b>King Mamank</b>.</p>
             <p class="bg-emerald-500/10 p-4 rounded-xl border border-emerald-500/30 text-sm md:text-base text-emerald-50 text-left">
                 <i class="fa-solid fa-robot mr-2 text-emerald-400"></i> 
-                <b class="text-white"></b> Utk hasil cetak laporan yg optimal, gunakan <b>HP Android</b> atau <b>Laptop</b> dgn browser <b>Google Chrome.</b> Jika Generating AI</b> gagal krn trafik padat. Coba lagi beberapa saat, <b>jangan</b> <i>refresh</i> halaman.
+                <b class="text-white"></b> Utk hasil cetak laporan yg optimal, gunakan <b>HP Android</b> atau <b>Laptop</b> dgn browser <b>Google Chrome.</b> Jika Generating AI gagal krn trafik padat. Coba lagi beberapa saat, <b>jangan</b> <i>refresh</i> halaman.
             </p>
         </div>
 
@@ -165,7 +165,7 @@
 
                 <input type="text" id="in_wkpp" oninput="sync()" placeholder="WKPP akan terisi otomatis">
                 <input type="text" id="in_kab" oninput="sync()" value="Wajo">
-                <input type="text" id="in_bpp" oninput="sync()"value="Bola">
+                <input type="text" id="in_bpp" oninput="sync()" value="Bola">
                 
                 <select id="in_bulan" onchange="sync()">
                     <option value="JANUARI">Januari</option>
@@ -223,7 +223,7 @@
                 <div class="grid grid-cols-3"><span>BPP WILAYAH</span><span class="col-span-2">: <span id="out_bpp_cover">-</span></span></div>
             </div>
         </div>
-        <div class="font-bold mt-10"><p>KEMENTERIAN PERTANIAN</p><p>BADAN PENYULUHAN DAN PENGEMBANGAN SDM PERTANIAN</p><p>PUSAT PENYULUHAN PERTANIAN</p><p class="mt-4">2026</p></div>
+        <div class="font-bold mt-10"><p>KEMENTERIAN PERTANIAN</p><p>BADAN PENYULUHAN DAN PENGEMBANGAN SDM PERTANIAN</p><p>PUSAT PENYULUHAN PERTANIAN</p><p class="mt-4" id="out_tahun_cover">2026</p></div>
     </div>
 
      <div class="page">
@@ -274,7 +274,7 @@
 
     <div class="page">
         <h2 class="font-bold text-lg mb-2 uppercase text-center">BAB II. PEMBAHASAN</h2>
-        <p class="font-bold mb-4">Rincian Capaian Kinerja Bulan <span id="out_bulan_2">JANUARI</span> 2026</p>
+        <p class="font-bold mb-4">Rincian Capaian Kinerja Bulan <span id="out_bulan_2">JANUARI</span> <span id="out_tahun_pembahasan">2026</span></p>
         <table>
             <thead>
                 <tr>
@@ -312,239 +312,265 @@
 </div>
 
 <script>
+    
+    
     const dataPenyuluh = {
-        "ABDUL RAHMAN, SP": { nip: "199009202020121001", wilayah: "DESA MANURUNG" },
-        "ANDI AGUS SALIM, SP": { nip: "198508162025211004", wilayah: "DESA LEMPONG" },
-        "HAMKA RAHMAN": { nip: "196807282014061001", wilayah: "KELURAHAN SOLO" },
-        "MUNIRAH": { nip: "198202092014062001", wilayah: "DESA BOLA" },
-        "M. ASRI": { nip: "197705012014061002", wilayah: "DESA BALIELO" },
-        "RUDIANSYAH": { nip: "198212202014061001", wilayah: "DESA PASIR PUTIH & DESA PATTANGNGAE" },
-        "SAMAILA": { nip: "197104142014061001", wilayah: "DESA SANRESENG ADE & DESA LATTIMU" },
-        "SITTI ROSIDA, SP": { nip: "198203152014062001", wilayah: "DESA UJUNG TANAH & DESA RAJA MAWELLANG" }
-    };
+    "ABDUL RAHMAN, SP": { nip: "199009202020121001", wilayah: "DESA MANURUNG" },
+    "ANDI AGUS SALIM, SP": { nip: "198508162025211004", wilayah: "DESA LEMPONG" },
+    "HAMKA RAHMAN": { nip: "196807282014061001", wilayah: "KELURAHAN SOLO" },
+    "MUNIRAH": { nip: "198202092014062001", wilayah: "DESA BOLA" },
+    "M. ASRI": { nip: "197705012014061002", wilayah: "DESA BALIELO" },
+    "RUDIANSYAH": { nip: "198212202014061001", wilayah: "DESA PASIR PUTIH & DESA PATTANGNGAE" },
+    "SAMAILA": { nip: "197104142014061001", wilayah: "DESA SANRESENG ADE & DESA LATTIMU" },
+    "SITTI ROSIDA, SP": { nip: "198203152014062001", wilayah: "DESA UJUNG TANAH & DESA RAJA MAWELLANG" }
+};
 
-    function updateIdentitas() {
-        const select = document.getElementById('in_nama');
-        const data = dataPenyuluh[select.value];
-        if (data) {
-            document.getElementById('in_nip').value = data.nip;
-            document.getElementById('in_wkpp').value = data.wilayah;
-            sync();
-        }
-    }
+const daftarKomponen = [
+    "Jumlah Laporan Luas Tambah Tanam (Padi, Jagung, Kedelai)",
+    "Persentase Pendampingan Produksi Hortikultura (Cabai, Bawang Merah/Putih)",
+    "Persentase Pendampingan Hilirisasi Perkebunan (Tebu, Kelapa, Kopi, Kakao, Lada, Pala, Sagu)",
+    "Persentase Pendampingan Penyediaan Benih/Bibit & Produksi Ternak (Sapi, Kambing, Babi, Unggas)",
+    "Persentase Pendampingan Pemanfaatan Alat dan Mesin Pertanian",
+    "Persentase Pendampingan RDKK Pupuk Subsidi",
+    "Persentase Pendampingan Survey Lokasi Cetak Sawah Rakyat (CSR)",
+    "Persentase Pendampingan Pemanfaatan Irigasi Perpompaan Dan Perpipaan",
+    "Persentase Penderasan Materi Informasi Pertanian & Kelompencapir Digital",
+    "Persentase Pendampingan Kinerja Brigade Pangan (BP)",
+    "Persentase Pengawalan dan Pendampingan CPCL Bantuan Pemerintah",
+    "Persentase Verifikasi dan Validasi Distribusi Pupuk Subsidi",
+    "Persentase Pelaksanaan Tugas Fungsi Penyuluhan Pertanian",
+    "Jumlah Data Statistik Pertanian Hortikultura",
+    "Jumlah Laporan Data Statistik Tanaman Pangan",
+    "Jumlah Laporan Data Statistik Perkebunan"
+];
 
-    const daftarKomponen = [
-        "Jumlah Laporan Luas Tambah Tanam (Padi, Jagung, Kedelai)",
-        "Persentase Pendampingan Produksi Hortikultura (Cabai, Bawang Merah/Putih)",
-        "Persentase Pendampingan Hilirisasi Perkebunan (Tebu, Kelapa, Kopi, Kakao, Lada, Pala, Sagu)",
-        "Persentase Pendampingan Penyediaan Benih/Bibit & Produksi Ternak (Sapi, Kambing, Babi, Unggas)",
-        "Persentase Pendampingan Pemanfaatan Alat dan Mesin Pertanian",
-        "Persentase Pendampingan RDKK Pupuk Subsidi",
-        "Persentase Pendampingan Survey Lokasi Cetak Sawah Rakyat (CSR)",
-        "Persentase Pendampingan Pemanfaatan Irigasi Perpompaan Dan Perpipaan",
-        "Persentase Penderasan Materi Informasi Pertanian & Kelompencapir Digital",
-        "Persentase Pendampingan Kinerja Brigade Pangan (BP)",
-        "Persentase Pengawalan dan Pendampingan CPCL Bantuan Pemerintah",
-        "Persentase Verifikasi dan Validasi Distribusi Pupuk Subsidi",
-        "Persentase Pelaksanaan Tugas Fungsi Penyuluhan Pertanian",
-        "Jumlah Data Statistik Pertanian Hortikultura",
-        "Jumlah Laporan Data Statistik Tanaman Pangan",
-        "Jumlah Laporan Data Statistik Perkebunan"
-    ];
-
-    function formatTanggalIndo(dateString) {
-        if (!dateString) return "...";
-        const date = new Date(dateString);
-        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
-    function init() {
-        const cont = document.getElementById('input_container');
-        cont.innerHTML = "";
-        daftarKomponen.forEach((k, i) => {
-            const no = i + 1;
-            cont.innerHTML += `
-                <div class="input-card" id="card_${no}">
-                    <div class="flex items-start gap-3 mb-2">
-                        <input type="checkbox" id="chk_${no}" onchange="toggle(${no})" class="w-5 h-5 mt-1">
-                        <label for="chk_${no}" class="font-normal text-sm text-slate-200 cursor-pointer">${no}. ${k}</label>
-                    </div>
-                    <div id="box_${no}" class="hidden-input space-y-2">
-                        <textarea id="key_${no}" placeholder="Detail aktivitas, objek/komoditi diperjelas: Cth. Monitoring luas tambah tanam padi Poktan Sukamaju"></textarea>
-                        <textarea id="ken_${no}" placeholder="Tulis kendala (Wajib manual): Cth. Curah hujan yang sangat rendah, serangan hama tikus yang masif" class="bg-red-900/20 border-red-500/50"></textarea>
-                        <input type="text" id="ev_${no}" class="text-xs" placeholder="Link G-Drive Eviden">
-                    </div>
-                </div>`;
-        });
-        document.getElementById('in_tanggal').value = new Date().toISOString().split('T')[0];
+function updateIdentitas() {
+    const select = document.getElementById('in_nama');
+    const data = dataPenyuluh[select.value];
+    if (data) {
+        document.getElementById('in_nip').value = data.nip;
+        document.getElementById('in_wkpp').value = data.wilayah;
         sync();
     }
+}
+
+function formatTanggalIndo(dateString) {
+    if (!dateString) return "...";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function init() {
+    const cont = document.getElementById('input_container');
+    cont.innerHTML = "";
+    daftarKomponen.forEach((k, i) => {
+        const no = i + 1;
+        cont.innerHTML += `
+            <div class="input-card" id="card_${no}">
+                <div class="flex items-start gap-3 mb-2">
+                    <input type="checkbox" id="chk_${no}" onchange="toggle(${no})" class="w-5 h-5 mt-1">
+                    <label for="chk_${no}" class="font-normal text-sm text-slate-200 cursor-pointer">${no}. ${k}</label>
+                </div>
+                <div id="box_${no}" class="hidden-input space-y-2">
+                    <textarea id="key_${no}" placeholder="Detail aktivitas..."></textarea>
+                    <textarea id="ken_${no}" placeholder="Tulis kendala (Wajib manual)..." class="bg-red-900/20 border-red-500/50"></textarea>
+                    <input type="text" id="ev_${no}" class="text-xs" placeholder="Link G-Drive Eviden">
+                </div>
+            </div>`;
+    });
+    document.getElementById('in_tanggal').value = new Date().toISOString().split('T')[0];
+    sync();
+}
 
 function handleTTD(input) {
-        const img1 = document.getElementById('out_ttd_img1');
-        const img2 = document.getElementById('out_ttd_img2');
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                img1.src = e.target.result;
-                img2.src = e.target.result;
-                img1.classList.remove('hidden');
-                img2.classList.remove('hidden');
-            };
-            reader.readAsDataURL(input.files[0]);
+    const img1 = document.getElementById('out_ttd_img1');
+    const img2 = document.getElementById('out_ttd_img2');
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            img1.src = e.target.result;
+            img2.src = e.target.result;
+            img1.classList.remove('hidden');
+            img2.classList.remove('hidden');
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function toggle(no) {
+    const is = document.getElementById(`chk_${no}`).checked;
+    document.getElementById(`box_${no}`).style.display = is ? 'block' : 'none';
+    document.getElementById(`card_${no}`).classList.toggle('active', is);
+    updateTable();
+}
+
+function updateTable() {
+    const tb = document.getElementById('out_table_body');
+    tb.innerHTML = "";
+    let c = 1;
+    daftarKomponen.forEach((k, i) => {
+        const no = i + 1;
+        if(document.getElementById(`chk_${no}`).checked) {
+            tb.innerHTML += `<tr><td align="center">${c++}</td><td>${k}</td><td id="r_${no}">...</td><td id="k_${no}" align="center">-</td><td id="t_${no}" align="center">-</td></tr>`;
         }
-    }
-    function toggle(no) {
-        const is = document.getElementById(`chk_${no}`).checked;
-        document.getElementById(`box_${no}`).style.display = is ? 'block' : 'none';
-        document.getElementById(`card_${no}`).classList.toggle('active', is);
-        updateTable();
-    }
-
-    function updateTable() {
-        const tb = document.getElementById('out_table_body');
-        tb.innerHTML = "";
-        let c = 1;
-        daftarKomponen.forEach((k, i) => {
-            const no = i + 1;
-            if(document.getElementById(`chk_${no}`).checked) {
-                tb.innerHTML += `<tr><td align="center">${c++}</td><td class="font-normal">${k}</td><td id="r_${no}">...</td><td id="k_${no}" align="center">-</td><td id="t_${no}" align="center">-</td></tr>`;
-            }
-        });
-    }
-// Fungsi untuk menutup peringatan
-function closeWarning() {
-    document.getElementById('browser-warning').style.display = 'none';
-    // Opsional: Simpan ke localStorage agar tidak muncul lagi setelah refresh
-    localStorage.setItem('warningSeen', 'true');
+    });
 }
 
-// Tambahkan pengecekan ini di dalam fungsi init() atau window.onload
-function checkFirstVisit() {
-    const hasSeen = localStorage.getItem('warningSeen');
-    if (hasSeen) {
-        document.getElementById('browser-warning').style.display = 'none';
-    }
+function sync() {
+    const val = (id) => document.getElementById(id).value;
+    const n = val('in_nama'); 
+    const nip = val('in_nip'); 
+    const b = val('in_bpp'); 
+    let blRaw = val('in_bulan');
+    const blRapi = blRaw.charAt(0).toUpperCase() + blRaw.slice(1).toLowerCase();
+
+    // Mengambil tahun dari input tanggal yang dipilih user
+    const tglInput = val('in_tanggal');
+    const tahunLaporan = tglInput ? new Date(tglInput).getFullYear() : new Date().getFullYear();
+
+    // Update elemen-elemen di Cover
+    document.getElementById('out_nama_cover').innerText = n || "-";
+    document.getElementById('out_nip_cover').innerText = nip || "-";
+    document.getElementById('out_jabatan_cover').innerText = (val('in_jabatan') || "PENYULUH PERTANIAN").toUpperCase();
+    document.getElementById('out_wkpp_cover').innerText = (val('in_wkpp') || "-").toUpperCase();
+    document.getElementById('out_bpp_cover').innerText = (b || "-").toUpperCase();
+    document.getElementById('out_bulan_cover').innerText = `BULAN ${blRaw}`;
+    
+    // Update Tahun di Cover (Jika Anda sudah menambahkan id="out_tahun_cover")
+    const elTahunCover = document.getElementById('out_tahun_cover');
+    if(elTahunCover) elTahunCover.innerText = tahunLaporan;
+
+    // Update Nama dan NIP di Tanda Tangan
+    document.getElementById('out_nama_sig1').innerText = n;
+    document.getElementById('out_nama_sig2').innerText = n;
+    document.getElementById('out_nip_sig2').innerText = nip;
+
+    // Update Bulan dan Tahun di Bab II Pembahasan
+    document.getElementById('out_bulan_2').innerText = blRapi; 
+    const elTahunBab2 = document.getElementById('out_tahun_pembahasan');
+    if(elTahunBab2) elTahunBab2.innerText = tahunLaporan;
+
+    // Update Lokasi dan Tanggal TTD
+    const tglTeks = formatTanggalIndo(tglInput);
+    document.getElementById('out_lokasi_tgl1').innerText = `${b}, ${tglTeks}`;
+    document.getElementById('out_lokasi_tgl2').innerText = `${b}, ${tglTeks}`;
 }
 
-// Update window.onload Anda menjadi:
-window.onload = () => {
-    init();
-    checkFirstVisit();
-};
-    function sync() {
-        const val = (id) => document.getElementById(id).value;
-        const n = val('in_nama'); 
-        const nip = val('in_nip'); 
-        const b = val('in_bpp'); 
-        let blRaw = val('in_bulan');
-        const blRapi = blRaw.charAt(0).toUpperCase() + blRaw.slice(1).toLowerCase();
+async function generateAI() {
+    const webAppUrl = "https://script.google.com/macros/s/AKfycbxFTCT0_ZuKhU48hI4YwFzIEiUara-SYXzVOOLgaWy0jw4unlffp-DDum9gpFRhnR4v/exec"; 
+    const btn = document.getElementById('btn-ai');
+    
+    // Ambil nilai input terbaru saat tombol diklik
+    const bpp = document.getElementById('in_bpp').value;
+    const kab = document.getElementById('in_kab').value;
+    const bulan = document.getElementById('in_bulan').value;
+    // Ambil tahun saat ini secara otomatis
+const tahunSekarang = new Date().getFullYear();
 
-        document.getElementById('out_nama_cover').innerText = n || "-";
-        document.getElementById('out_nip_cover').innerText = nip || "-";
-        document.getElementById('out_jabatan_cover').innerText = (val('in_jabatan') || "PENYULUH PERTANIAN").toUpperCase();
-        document.getElementById('out_wkpp_cover').innerText = (val('in_wkpp') || "-").toUpperCase();
-        document.getElementById('out_bpp_cover').innerText = (b || "-").toUpperCase();
-        document.getElementById('out_bulan_cover').innerText = `BULAN ${blRaw}`;
-        
-        document.getElementById('out_nama_sig1').innerText = n;
-        document.getElementById('out_nama_sig2').innerText = n;
-        document.getElementById('out_nip_sig2').innerText = nip;
-        
-        document.getElementById('out_bulan_2').innerText = blRapi; 
+    let sel = [];
+    daftarKomponen.forEach((k, i) => {
+        const no = i + 1;
+        if(document.getElementById(`chk_${no}`).checked) {
+            sel.push({ 
+                no, 
+                nama: k, 
+                detail: document.getElementById(`key_${no}`).value, 
+                user_kendala: document.getElementById(`ken_${no}`).value, 
+                link: document.getElementById(`ev_${no}`).value 
+            });
+        }
+    });
 
-        const tglTeks = formatTanggalIndo(val('in_tanggal'));
-        document.getElementById('out_lokasi_tgl1').innerText = `${b}, ${tglTeks}`;
-        document.getElementById('out_lokasi_tgl2').innerText = `${b}, ${tglTeks}`;
-    }
+    if(sel.length === 0) return alert("Pilih minimal satu kegiatan!");
+    
+    btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> AI Berpikir..."; 
+    btn.disabled = true;
 
-    async function generateAI() {
-        const apiKey = "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"; 
-        const btn = document.getElementById('btn-ai');
-        let sel = [];
-        
-        daftarKomponen.forEach((k, i) => {
-            const no = i + 1;
-            if(document.getElementById(`chk_${no}`).checked) {
-                sel.push({ 
-                    no, 
-                    nama: k, 
-                    detail: document.getElementById(`key_${no}`).value, 
-                    user_kendala: document.getElementById(`ken_${no}`).value, 
-                    link: document.getElementById(`ev_${no}`).value 
-                });
-            }
-        });
 
-        if(sel.length === 0) return alert("Pilih minimal satu kegiatan!");
-        btn.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Processing..."; 
-        btn.disabled = true;
-
-        try {
-            const prompt = `Anda adalah PPL Pertanian Profesional. Tugas Anda: Menyusun laporan bulanan formal standar Kementerian Pertanian. 
+    // Prompt baru Anda yang sudah dioptimasi
+    const promptText = `Anda adalah PPL Pertanian Profesional. Tugas Anda: Menyusun laporan bulanan formal standar Kementerian Pertanian. 
 
 Data Utama: ${JSON.stringify(sel)}
-Lokasi: BPP ${document.getElementById('in_bpp').value}, Kab: ${document.getElementById('in_kab').value}.
-Periode: ${document.getElementById('in_bulan').value} 2026.
+Lokasi: BPP ${bpp}, Kab: ${kab}.
+Periode: ${bulan} ${tahunSekarang}.
 
 Aturan Penulisan:
 1. Bahasa: Gunakan Bahasa Indonesia formal, teknis, dan objektif.
 2. 'kp' (Kata Pengantar):
-- Wajib terdiri dari 3 paragraf TERPISAH (dipisahkan dengan newline \n\n).
-- Paragraf 1 (Pembuka):
-  Berisi rasa syukur kepada Tuhan Yang Maha Esa, serta penjelasan umum tentang pentingnya laporan kinerja penyuluh pertanian dalam mendukung program Kementerian Pertanian.
-- Paragraf 2 (Isi):
-  Menjelaskan secara ringkas kegiatan yang dilaksanakan berdasarkan data, mencakup pendampingan, capaian, serta peran penyuluh dalam meningkatkan produktivitas dan kesejahteraan petani.
-- Paragraf 3 (Penutup):
-  Berisi harapan, evaluasi umum, serta ucapan terima kasih kepada pihak terkait (petani, pemerintah, dll).
-- Gunakan bahasa formal, panjang, dan naratif (bukan poin-poin).
-- Hindari kalimat terlalu singkat.
-- Gunakan variasi kalimat agar terlihat profesional seperti laporan resmi pemerintah.
-3. 'latar', 'tugas', 'tujuan': Harus mencerminkan kondisi pertanian wilayah setempat dan tupoksi Penyuluh Pertanian sesuai PERMENPAN (perencanaan, pelaksanaan, evaluasi, dan pengembangan metode penyuluhan).
-4. 'items': Iterasi seluruh data. 'rincian' maksimal 1 kalimat efektif. Jika 'user_kendala' kosong/null, buat kendala teknis lapangan yang relevan secara logis. 'tindak' harus berupa solusi profesional dengan maksimal 2 kalimat efektif.
+- Wajib terdiri dari 3 paragraf TERPISAH (dipisahkan dengan newline \\n\\n).
+- Paragraf 1 (Pembuka): Berisi rasa syukur kepada Tuhan Yang Maha Esa, serta penjelasan umum tentang pentingnya laporan kinerja penyuluh pertanian dalam mendukung program Kementerian Pertanian.
+- Paragraf 2 (Isi): Menjelaskan secara ringkas kegiatan yang dilaksanakan berdasarkan data, mencakup pendampingan, capaian, serta peran penyuluh dalam meningkatkan produktivitas dan kesejahteraan petani.
+- Paragraf 3 (Penutup): Berisi harapan, evaluasi umum, serta ucapan terima kasih kepada pihak terkait (petani, pemerintah, dll).
+- Gunakan bahasa formal, panjang, dan naratif.
+3. 'latar', 'tugas', 'tujuan': Harus mencerminkan kondisi pertanian wilayah setempat dan tupoksi Penyuluh Pertanian sesuai PERMENPAN.
+4. 'items': Iterasi seluruh data. 'rincian' maksimal 1 kalimat efektif. Jika 'user_kendala' kosong, buat kendala teknis lapangan yang relevan. 'tindak' maksimal 2 kalimat efektif.
 5. 'kesimp' (Kesimpulan):
-- Wajib terdiri dari 2 paragraf TERPISAH.
-- Gunakan bahasa Indonesia formal, baku, dan naratif seperti laporan resmi pemerintah.
+- Wajib terdiri dari 2 paragraf TERPISAH (\\n\\n).
+- Paragraf 1 (Pencapaian): Menjelaskan umum capaian kinerja dan kontribusi terhadap program Kementan.
+- Paragraf 2 (Evaluasi Kendala): Menguraikan kendala lapangan (teknis, cuaca, dll), strategi ke depan, dan harapan dukungan pemerintah.
 
-Struktur isi:
-- Paragraf 1 (Pencapaian):
-  Menjelaskan secara umum capaian kinerja penyuluh berdasarkan kegiatan yang telah dilaksanakan, termasuk kontribusi terhadap peningkatan produksi, pendampingan petani, dan dukungan terhadap program Kementerian Pertanian.
-
-- Paragraf 2 (Evaluasi Kendala):
-  Menguraikan kendala yang dihadapi di lapangan (teknis, cuaca, sarana prasarana, partisipasi petani, dll) serta dampaknya terhadap pelaksanaan kegiatan, strategi ke depan, serta harapan terhadap dukungan pemerintah,
-
-PENTING: Output wajib JSON murni tanpa teks pengantar apapun di luar bracket:
+PENTING: Output wajib JSON murni tanpa teks pengantar:
 {"kp":"", "latar":"", "tugas":"", "tujuan":"", "kesimp":"", "items":[{"no":1, "rincian":"", "kendala":"", "tindak":""}]}`;
 
-            const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${apiKey}` },
-                body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: prompt }], response_format: { type: "json_object" } })
-            });
-            const data = await res.json();
-            const obj = JSON.parse(data.choices[0].message.content);
+    try {
+        const res = await fetch(webAppUrl, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ prompt: promptText })
+        });
 
-            document.getElementById('out_kp').innerHTML = obj.kp.replace(/\n/g, '<br>');
-            document.getElementById('out_latar').innerHTML = obj.latar.replace(/\n/g, '<br>');
-            document.getElementById('out_tugas_pokok').innerHTML = obj.tugas.replace(/\n/g, '<br>');
-            document.getElementById('out_tujuan').innerHTML = obj.tujuan.replace(/\n/g, '<br>');
-            document.getElementById('out_kesimp').innerHTML = obj.kesimp.replace(/\n/g, '<br>');
+        const data = await res.json(); 
+        const obj = JSON.parse(data.choices[0].message.content);
 
-            obj.items.forEach(item => {
-                const rCell = document.getElementById(`r_${item.no}`);
-                const orig = sel.find(s => s.no == item.no);
-                if(rCell) {
-                    rCell.innerHTML = `<div><b>${item.rincian}</b></div>${orig.link ? `<div style="font-size:7pt; color:blue; margin-top:5px; border-top: 0.5px solid #eee;">Eviden: ${orig.link}</div>` : ""}`;
-                    document.getElementById(`k_${item.no}`).innerText = orig.user_kendala || item.kendala;
-                    document.getElementById(`t_${item.no}`).innerText = item.tindak;
-                }
-            });
-            document.querySelectorAll('.italic.text-gray-400').forEach(el => el.classList.remove('italic', 'text-gray-400'));
-            alert("✅ Narasi Laporan Berhasil Dibuat!");
-        } catch (e) { alert("Error: " + e.message); } 
-        finally { btn.innerHTML = "🚀 GENERATE NARASI LAPORAN"; btn.disabled = false; }
+        // Mengubah \n menjadi <br> agar tampil rapi di HTML
+        document.getElementById('out_kp').innerHTML = obj.kp.replace(/\n/g, '<br>');
+        document.getElementById('out_latar').innerHTML = obj.latar.replace(/\n/g, '<br>');
+        document.getElementById('out_tugas_pokok').innerHTML = obj.tugas.replace(/\n/g, '<br>');
+        document.getElementById('out_tujuan').innerHTML = obj.tujuan.replace(/\n/g, '<br>');
+        document.getElementById('out_kesimp').innerHTML = obj.kesimp.replace(/\n/g, '<br>');
+
+       // Update tabel pembahasan berdasarkan respon AI
+        obj.items.forEach(item => {
+            const rCell = document.getElementById(`r_${item.no}`);
+            const kCell = document.getElementById(`k_${item.no}`);
+            const tCell = document.getElementById(`t_${item.no}`);
+            
+            // Cari data asli untuk mengambil link eviden dan kendala user
+            const orig = sel.find(s => s.no == item.no);
+            
+            if(rCell && orig) {
+                // Isi Rincian & Eviden
+                rCell.innerHTML = `<div><b>${item.rincian}</b></div>${orig.link ? `<div style="font-size:7pt; color:blue; margin-top:5px;">Eviden: ${orig.link}</div>` : ""}`;
+                
+                // Isi Kendala: Prioritaskan input manual user, jika kosong pakai saran AI
+                kCell.innerText = orig.user_kendala || item.kendala;
+                
+                // Isi Tindak Lanjut dari AI
+                tCell.innerText = item.tindak;
+            }
+        });
+
+        document.querySelectorAll('.italic.text-gray-400').forEach(el => el.classList.remove('italic', 'text-gray-400'));
+        alert("✅ Narasi Laporan Berhasil Dibuat!");
+
+    } catch (e) { 
+        console.error(e);
+        alert("Terjadi kesalahan saat menghubungi AI."); 
+    } finally { 
+        btn.innerHTML = "🚀 GENERATE AI - NARASI LAPORAN"; 
+        btn.disabled = false; 
     }
-    window.onload = init;
+}
+
+   window.onload = () => {
+    init(); // Menjalankan fungsi persiapan form
+    // Dialog otomatis muncul karena di HTML tidak kita beri display:none
+};
+function closeWarning() {
+    // Menghilangkan dialog dengan mengubah display menjadi none
+    document.getElementById('browser-warning').style.display = 'none';
+}
+
 </script>
 </body>
 </html>
